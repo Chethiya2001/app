@@ -44,7 +44,7 @@ Google Sign-In.
 ### Android
 
 1. In [Firebase Console](https://console.firebase.google.com/), create or select a Firebase project and add an **Android app**.
-2. Register the package name `com.example.app`, which is the current `applicationId` in `android/app/build.gradle.kts`.
+2. Register the package name `com.hotelexplorer.app`, which is the current `applicationId` in `android/app/build.gradle.kts`.
 3. From the `android` directory, run `./gradlew signingReport` on macOS/Linux or `gradlew.bat signingReport` in PowerShell on Windows. Add the debug SHA-1 and SHA-256 fingerprints to the Firebase Android app. Add release fingerprints before testing a signed release build.
 4. In Firebase Authentication, enable the **Google** provider and add the test accounts that are allowed to sign in.
 5. Download `google-services.json` from Firebase and place it at `android/app/google-services.json`. Do not rename it or place it in the repository root. The Gradle Google Services plugin is already configured in `android/settings.gradle.kts` and `android/app/build.gradle.kts`.
@@ -52,7 +52,7 @@ Google Sign-In.
 
 ### iOS
 
-1. In the same Firebase project, add an **iOS app** with bundle identifier `com.example.app`.
+1. In the same Firebase project, add an **iOS app** with bundle identifier `com.hotelexplorer.app`.
 2. Download `GoogleService-Info.plist` and add it to `ios/Runner` through Xcode, ensuring it is included in the Runner target.
 3. Copy `CLIENT_ID` and `REVERSED_CLIENT_ID` from that plist into the `GOOGLE_CLIENT_ID` and `GOOGLE_REVERSED_CLIENT_ID` build settings used by `ios/Runner/Info.plist`.
 4. Run `cd ios && pod install`, return to the project root, and launch with `flutter run` on an iOS device or simulator.
