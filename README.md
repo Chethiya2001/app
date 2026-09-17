@@ -26,28 +26,38 @@ A Flutter mobile app that authenticates with Google, downloads the supplied hote
 1. Clone the repository and enter this directory.
 2. Run `flutter doctor` and resolve platform toolchain warnings.
 3. Run `flutter pub get`.
-4. Configure Google Sign-In as described below.
+4. Register the app in Firebase and configure Google Sign-In as described below.
 5. Run `flutter test` and `flutter analyze`.
-6. Start the app with `flutter run`.
+6. Start the app with `flutter run` on a configured emulator or device.
+
+The Firebase registration is required for Google OAuth configuration. This
+project does not use the Firebase Flutter SDK; it uses the `google_sign_in`
+package directly. Firebase still supplies the platform OAuth clients and the
+Android Google Services configuration file.
 
 ## Google Sign-In configuration
 
-Credentials are intentionally not committed.
+Credentials and platform configuration files are intentionally not committed.
+Complete the Firebase registration before building a platform that needs
+Google Sign-In.
 
 ### Android
 
-1. Create an Android OAuth client for this app in Google Cloud Console or Firebase.
-2. Register the Android package name from `android/app/build.gradle.kts` and the SHA-1/SHA-256 fingerprints of your signing certificate (`./gradlew signingReport` from `android`).
-3. Download `google-services.json` to `android/app/` and complete the standard Firebase Google Services Gradle setup, or provide the matching web client ID using the platform configuration supported by `google_sign_in`.
-4. Enable Google as a sign-in provider and add each developer/release signing fingerprint.
+1. In [Firebase Console](https://console.firebase.google.com/), create or select a Firebase project and add an **Android app**.
+2. Register the package name `com.example.app`, which is the current `applicationId` in `android/app/build.gradle.kts`.
+3. From the `android` directory, run `./gradlew signingReport` on macOS/Linux or `gradlew.bat signingReport` in PowerShell on Windows. Add the debug SHA-1 and SHA-256 fingerprints to the Firebase Android app. Add release fingerprints before testing a signed release build.
+4. In Firebase Authentication, enable the **Google** provider and add the test accounts that are allowed to sign in.
+5. Download `google-services.json` from Firebase and place it at `android/app/google-services.json`. Do not rename it or place it in the repository root. The Gradle Google Services plugin is already configured in `android/settings.gradle.kts` and `android/app/build.gradle.kts`.
+6. Run `flutter clean` followed by `flutter pub get`, then launch the app again.
 
 ### iOS
 
-1. Create an iOS OAuth client for the bundle identifier in Xcode.
-2. Add the client ID and reversed client ID URL scheme to `ios/Runner/Info.plist` following the `google_sign_in_ios` setup instructions.
-3. If using Firebase, place `GoogleService-Info.plist` in `ios/Runner` through Xcode so it is part of the Runner target.
+1. In the same Firebase project, add an **iOS app** with bundle identifier `com.example.app`.
+2. Download `GoogleService-Info.plist` and add it to `ios/Runner` through Xcode, ensuring it is included in the Runner target.
+3. Copy `CLIENT_ID` and `REVERSED_CLIENT_ID` from that plist into the `GOOGLE_CLIENT_ID` and `GOOGLE_REVERSED_CLIENT_ID` build settings used by `ios/Runner/Info.plist`.
+4. Run `cd ios && pod install`, return to the project root, and launch with `flutter run` on an iOS device or simulator.
 
-Never commit production OAuth secrets or private signing keys. The application displays a useful configuration error on the login screen if credentials are missing.
+Never commit private signing keys or production secrets. Treat the Firebase configuration files as environment-specific registration artifacts and check the repository ignore rules before committing them. The application displays a useful configuration error on the login screen if credentials are missing.
 
 ## How to test
 
@@ -67,6 +77,11 @@ flutter analyze
 flutter test
 flutter build apk --debug
 ```
+
+`flutter test` and `flutter analyze` can run before Firebase registration because
+the current tests do not start the native Google Sign-In flow. The debug APK
+build requires `android/app/google-services.json` because the Android Gradle
+plugin processes that file.
 
 ## Architecture
 
